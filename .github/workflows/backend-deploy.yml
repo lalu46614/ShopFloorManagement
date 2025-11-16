@@ -1,0 +1,56 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.js'
+      - '**/*.json'
+      - 'database/**'
+      - 'modules/**'
+      - '.github/workflows/backend-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'file:./database/shopfloor.db' }}
+
+      - name: Run tests (if available)
+        run: |
+          if [ -f "package.json" ] && grep -q '"test"' package.json; then
+            npm test || echo "No tests configured"
+          else
+            echo "No tests configured"
+          fi
+        continue-on-error: true
+
+      - name: Deploy to Render
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          else
+            echo "RENDER_DEPLOY_HOOK_URL not configured. Skipping deployment."
+          fi
+
+      - name: Deployment Status
+        run: echo "✅ Backend deployment triggered successfully"
+

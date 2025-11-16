@@ -1,0 +1,77 @@
+// Prisma Schema for Shop Floor Management Module
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Machine {
+  id            String   @id @default(uuid())
+  machine_id    String   @unique
+  name          String
+  status        String   // Running | Idle | Maintenance | Error
+  output        Int      @default(0)
+  last_updated  DateTime @default(now())
+  error_message String?
+  operator      String?
+
+  @@index([machine_id])
+  @@index([status])
+  @@map("machines")
+}
+
+model SafetyArea {
+  id            String   @id @default(uuid())
+  area_name     String   @unique
+  zone          String   // e.g., "WeldingZone", "AssemblyZone", "PackagingZone"
+  ppe_required  String   // Comma-separated PPE items
+  risk_level    String   // Low | Medium | High | Critical
+  last_inspection DateTime @default(now())
+  status        String   // Safe | Warning | Critical | Maintenance
+  notes         String?
+  
+  @@index([area_name])
+  @@index([zone])
+  @@index([status])
+  @@map("safety_areas")
+}
+
+model SafetyLog {
+  id            String   @id @default(uuid())
+  area_name     String
+  zone          String
+  ppe_compliance String  // Compliant | NonCompliant | Partial
+  incident_type String?  // NearMiss | Incident | Inspection
+  description   String?
+  reported_by   String?
+  created_at    DateTime @default(now())
+  
+  @@index([area_name])
+  @@index([created_at])
+  @@map("safety_logs")
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  order_id      String   @unique
+  customer_name String?
+  stage         String   // Planning | Production | Quality | Packaging | Shipping | Completed
+  priority      String   // Low | Medium | High | Urgent
+  quantity      Int      @default(0)
+  materials     String?  // JSON string or comma-separated list
+  eta           String?  // Expected delivery date
+  status        String   // Active | OnHold | Completed | Cancelled
+  assigned_to   String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+  
+  @@index([order_id])
+  @@index([stage])
+  @@index([status])
+  @@index([priority])
+  @@map("orders")
+}
+
