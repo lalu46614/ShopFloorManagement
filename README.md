@@ -8,8 +8,8 @@ A comprehensive Node.js + Express backend and React frontend for managing manufa
 - ✅ **Machine Management** - Real-time machine status tracking (Running, Idle, Maintenance, Error)
 - ✅ **Safety Management** - Safety area monitoring, PPE compliance tracking, incident logging
 - ✅ **Order Tracking** - Order status, stage tracking, priority management, ETA tracking
-- ✅ **WhatsApp Integration** - Webhook endpoint for receiving worker updates via WhatsApp
-- ✅ **LLM Integration** - OpenAI-powered AI assistant for generating summaries and insights
+- ✅ **WhatsApp Integration** - Webhook endpoint for receiving worker updates via WhatsApp(future feature)
+- ✅ **LLM Integration** - OpenAI-powered AI assistant for generating summaries and insights(future feature)
 - ✅ **REST API** - Comprehensive API endpoints for all modules
 - ✅ **SQLite Database** - Prisma ORM with automatic migrations
 - ✅ **CI/CD Pipelines** - GitHub Actions for automated deployment
